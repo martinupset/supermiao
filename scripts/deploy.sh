@@ -14,8 +14,8 @@ remote=$(git config remote.origin.url)
 echo 'remote is: '$remote
 
 # make a directory to put the gp-pages branch
-mkdir gh-pages-branch
-cd gh-pages-branch
+mkdir BE-babel-branch
+cd BE-babel-branch
 # now lets setup a new repo so we can update the gh-pages branch
 git config --global user.email "$GH_EMAIL" > /dev/null 2>&1
 git config --global user.name "$GH_NAME" > /dev/null 2>&1
@@ -34,7 +34,7 @@ then
     # Note: this explodes if there aren't any, so moving it here for now
     git rm -rf .
 else
-    git checkout --orphan gh-pages
+    git checkout --orphan BE-babel
 fi
 
 # copy over or recompile the new site
@@ -47,16 +47,16 @@ git add -A
 # now commit, ignoring branch gh-pages doesn't seem to work, so trying skip
 git commit --allow-empty -m "Deploy to GitHub pages [ci skip]"
 # and push, but send any output to /dev/null to hide anything sensitive
-git push --force --quiet origin gh-pages
+git push --force --quiet origin BE-babel
 # go back to where we started and remove the gh-pages git repo we made and used
 # for deployment
 cd ..
 
 tar -czvf dist.tar.gz "${siteSource}"
 
-scp dist.tar.gz root@209.126.8.49:/root/supermiao
+scp dist.tar.gz root@${ipAddress}:/root/supermiao
 
-ssh root@209.126.8.49 "cd /root/supermiao && rm -rf dist && tar -xzvf dist.tar.gz && rm -rf dist.tar.gz && exit"
+ssh root@${ipAddress} "cd /root/supermiao && rm -rf dist && tar -xzvf dist.tar.gz && rm -rf dist.tar.gz && exit"
 
 rm -rf dist.tar.gz
 
@@ -64,6 +64,6 @@ echo 'miao'
 
 cd ..
 
-rm -rf gh-pages-branch
+rm -rf BE-babel-branch
 
 echo "Finished Deployment!"
